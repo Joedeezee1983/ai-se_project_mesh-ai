@@ -43,3 +43,17 @@ export const updateChat = (_req: Request, res: Response): void => {
 export const deleteChat = (_req: Request, res: Response): void => {
   res.status(204).send();
 };
+
+export const createMessage = (_req: Request, res: Response): void => {
+  res.status(201).json({
+    success: true,
+    data: {
+      messageId: 'msg_001',
+      chatId: 'chat_001',
+      userId: 'user_001',
+      content: 'Hello, this is a test message',
+      createdAt: '2026-01-01T00:00:00Z',
+    },
+    error: null,
+  });
+};

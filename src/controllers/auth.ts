@@ -25,14 +25,6 @@ export const login = (_req: Request, res: Response): void => {
   });
 };
 
-export const logout = (_req: Request, res: Response): void => {
-  res.status(200).json({
-    success: true,
-    data: { message: 'Logged out successfully' },
-    error: null,
-  });
-};
-
 export const getCurrentUser = (_req: Request, res: Response): void => {
   res.status(200).json({
     success: true,

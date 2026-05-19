@@ -43,3 +43,16 @@ export const updateDocument = (_req: Request, res: Response): void => {
 export const deleteDocument = (_req: Request, res: Response): void => {
   res.status(204).send();
 };
+
+export const ingestDocument = (_req: Request, res: Response): void => {
+  res.status(200).json({
+    success: true,
+    data: {
+      documentId: 'doc_001',
+      status: 'ingested',
+      message: 'Document ingested successfully',
+      ingestedAt: '2026-01-01T00:00:00Z',
+    },
+    error: null,
+  });
+};

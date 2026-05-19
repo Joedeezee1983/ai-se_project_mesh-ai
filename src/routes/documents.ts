@@ -5,6 +5,7 @@ import {
   getDocument,
   updateDocument,
   deleteDocument,
+  ingestDocument,
 } from '../controllers/documents.js';
 
 const documentsRouter = Router();
@@ -14,5 +15,6 @@ documentsRouter.post('/', uploadDocument);
 documentsRouter.get('/:documentId', getDocument);
 documentsRouter.patch('/:documentId', updateDocument);
 documentsRouter.delete('/:documentId', deleteDocument);
+documentsRouter.post('/:documentId/ingest', ingestDocument);
 
 export { documentsRouter };
