@@ -1,12 +1,16 @@
 import type { Request, Response } from 'express';
+import Chat from '../models/chat.js';
 import Document from '../models/document.js';
 import Chunk from '../models/chunk.js';
+import Message from '../models/message.js';
 import { createEmbedding } from '../utils/embeddings.js';
 import { rankBySimilarity } from '../utils/vector-search.js';
 import { getClient, LLM_MODEL, buildContext } from '../utils/openai-client.js';
 
-export const queryDocuments = async (req: Request, res: Response): Promise<void> => {
+export const createMessage = async (req: Request, res: Response): Promise<void> => {
   const { question } = req.body as { question?: string };
+  const chatId = req.params['id'] ?? '';
+  const userId = req.user!.userId;
 
   if (!question) {
     res.status(400).json({
@@ -17,10 +21,18 @@ export const queryDocuments = async (req: Request, res: Response): Promise<void>
     return;
   }
 
-  const userId = req.user!.userId;
+  const chat = await Chat.findOne({ _id: chatId, userId });
+  if (!chat) {
+    res.status(404).json({
+      success: false,
+      data: null,
+      error: { message: 'Chat not found' },
+    });
+    return;
+  }
+
   const userDocs = await Document.find({ userId }, '_id');
   const docIds = userDocs.map((d) => d._id);
-
   const chunkRecords = await Chunk.find({ documentId: { $in: docIds } });
   const chunks = chunkRecords.map((c) => ({
     id: String(c._id),
@@ -50,13 +62,12 @@ export const queryDocuments = async (req: Request, res: Response): Promise<void>
 
   const answer = completion.choices[0]?.message.content ?? 'No answer generated.';
 
-  res.status(200).json({ success: true, data: { answer }, error: null });
-};
+  const userMessage = await Message.create({ chatId: chat._id, role: 'user', content: question });
+  const assistantMessage = await Message.create({ chatId: chat._id, role: 'assistant', content: answer });
 
-export const getChatQueries = (_req: Request, res: Response): void => {
-  res.status(200).json({ success: true, data: [], error: null });
-};
-
-export const getQuery = (_req: Request, res: Response): void => {
-  res.status(200).json({ success: true, data: null, error: null });
+  res.status(201).json({
+    success: true,
+    data: [userMessage, assistantMessage],
+    error: null,
+  });
 };

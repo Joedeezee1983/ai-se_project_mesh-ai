@@ -6,7 +6,11 @@
       "Bash(curl -s http://localhost:3000/health)",
       "Bash(curl -s http://localhost:3000/auth/me)",
       "Bash(curl -s http://localhost:3000/nonexistent)",
-      "Bash(curl -s http://localhost:3000/chats)"
+      "Bash(curl -s http://localhost:3000/chats)",
+      "Bash(npx tsc *)",
+      "Bash(npx eslint *)",
+      "Bash(node -e \"import\\('pdf-parse'\\).then\\(m => console.log\\(Object.keys\\(m\\)\\)\\)\")",
+      "Bash(timeout 8 npx tsx src/index.ts)"
     ]
   }
 }

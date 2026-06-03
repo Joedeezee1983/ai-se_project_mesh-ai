@@ -1,13 +1,12 @@
 import { Router } from 'express';
-import {
-  submitQuery,
-  getChatQueries,
-  getQuery,
-} from '../controllers/query.js';
+import { queryDocuments, getChatQueries, getQuery } from '../controllers/query.js';
+import { auth } from '../middleware/auth.js';
 
 const queryRouter = Router();
 
-queryRouter.post('/', submitQuery);
+queryRouter.use(auth);
+
+queryRouter.post('/', queryDocuments);
 queryRouter.get('/chats/:chatId', getChatQueries);
 queryRouter.get('/:queryId', getQuery);
 

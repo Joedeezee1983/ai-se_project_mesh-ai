@@ -1,59 +1,51 @@
 import type { Request, Response } from 'express';
+import Chat from '../models/chat.js';
+import Message from '../models/message.js';
 
-const FAKE_CHAT = {
-  chatId: 'chat_001',
-  userId: 'user_001',
-  title: 'My First Chat',
-  createdAt: '2026-01-01T00:00:00Z',
-  updatedAt: '2026-01-02T00:00:00Z',
+export const createChat = async (req: Request, res: Response): Promise<void> => {
+  const { title } = req.body as { title?: string };
+  const userId = req.user!.userId;
+
+  if (!title) {
+    res.status(400).json({
+      success: false,
+      data: null,
+      error: { message: 'title is required' },
+    });
+    return;
+  }
+
+  const chat = await Chat.create({ title, userId });
+  res.status(201).json({ success: true, data: chat, error: null });
 };
 
-export const getChats = (_req: Request, res: Response): void => {
-  res.status(200).json({
-    success: true,
-    data: [FAKE_CHAT],
-    error: null,
-  });
+export const getChats = async (req: Request, res: Response): Promise<void> => {
+  const userId = req.user!.userId;
+  const chats = await Chat.find({ userId });
+  res.status(200).json({ success: true, data: chats, error: null });
 };
 
-export const createChat = (_req: Request, res: Response): void => {
-  res.status(201).json({
-    success: true,
-    data: FAKE_CHAT,
-    error: null,
-  });
-};
+export const getChat = async (req: Request, res: Response): Promise<void> => {
+  const userId = req.user!.userId;
+  const chat = await Chat.findOne({ _id: req.params['id'], userId });
 
-export const getChat = (_req: Request, res: Response): void => {
-  res.status(200).json({
-    success: true,
-    data: FAKE_CHAT,
-    error: null,
-  });
+  if (!chat) {
+    res.status(404).json({
+      success: false,
+      data: null,
+      error: { message: 'Chat not found' },
+    });
+    return;
+  }
+
+  const messages = await Message.find({ chatId: chat._id }).sort({ createdAt: 1 });
+  res.status(200).json({ success: true, data: { chat, messages }, error: null });
 };
 
 export const updateChat = (_req: Request, res: Response): void => {
-  res.status(200).json({
-    success: true,
-    data: { ...FAKE_CHAT, title: 'Updated Chat Title' },
-    error: null,
-  });
+  res.status(200).json({ success: true, data: null, error: null });
 };
 
 export const deleteChat = (_req: Request, res: Response): void => {
   res.status(204).send();
-};
-
-export const createMessage = (_req: Request, res: Response): void => {
-  res.status(201).json({
-    success: true,
-    data: {
-      messageId: 'msg_001',
-      chatId: 'chat_001',
-      userId: 'user_001',
-      content: 'Hello, this is a test message',
-      createdAt: '2026-01-01T00:00:00Z',
-    },
-    error: null,
-  });
 };
