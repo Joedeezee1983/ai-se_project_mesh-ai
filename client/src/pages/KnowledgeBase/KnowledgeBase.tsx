@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { getDocuments, KnowledgeDoc } from '../../utils/api';
+import { getDocuments } from '../../utils/api';
+import type { KnowledgeDoc } from '../../utils/api';
 import UploadArea from '../../components/UploadArea/UploadArea';
 import './KnowledgeBase.css';
 
