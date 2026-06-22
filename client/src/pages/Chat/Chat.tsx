@@ -1,20 +1,5 @@
-import { useState, useEffect, useRef, FormEvent, KeyboardEvent } from 'react';
-import { getChats, createChat, getMessages, sendMessage } from '../../utils/api';
-
-type ChatType = {
-  _id: string;
-  title: string;
-  userId: string;
-  createdAt: string;
-};
-
-type Message = {
-  _id: string;
-  chatId: string;
-  role: 'user' | 'assistant';
-  content: string;
-  createdAt: string;
-};
+import { useState, useEffect, useRef, type FormEvent, type KeyboardEvent } from 'react';
+import { getChats, createChat, getMessages, sendMessage, type Chat as ChatType, type Message } from '../../utils/api';
 import './Chat.css';
 
 export default function Chat() {
