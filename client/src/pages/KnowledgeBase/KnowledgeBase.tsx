@@ -1,6 +1,13 @@
 import { useState, useEffect } from 'react';
 import { getDocuments } from '../../utils/api';
-import type { KnowledgeDoc } from '../../utils/api';
+
+type KnowledgeDoc = {
+  _id: string;
+  title: string;
+  fileName: string;
+  userId: string;
+  createdAt: string;
+};
 import UploadArea from '../../components/UploadArea/UploadArea';
 import './KnowledgeBase.css';
 
