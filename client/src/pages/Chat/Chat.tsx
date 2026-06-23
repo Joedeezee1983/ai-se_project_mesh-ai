@@ -12,6 +12,7 @@ export default function Chat() {
   const [isLoadingChats, setIsLoadingChats] = useState(true);
   const [isLoadingMessages, setIsLoadingMessages] = useState(false);
   const [isSending, setIsSending] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -36,6 +37,7 @@ export default function Chat() {
   const handleSelectChat = (id: string) => {
     setActiveChatId(id);
     setShowNewChat(false);
+    setSidebarOpen(false);
   };
 
   const handleCreateChat = async (e: FormEvent) => {
@@ -48,6 +50,7 @@ export default function Chat() {
       setActiveChatId(res.data._id);
       setNewChatInput('');
       setShowNewChat(false);
+      setSidebarOpen(false);
     }
   };
 
@@ -82,22 +85,44 @@ export default function Chat() {
     }
   };
 
+  const handleNewChatKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Escape') {
+      setShowNewChat(false);
+      setNewChatInput('');
+    }
+  };
+
   const activeChat = chats.find((c) => c._id === activeChatId);
 
   return (
     <div className="chat">
-      <aside className="chat__sidebar">
+      {sidebarOpen && (
+        <div className="chat__backdrop" onClick={() => setSidebarOpen(false)} aria-hidden="true" />
+      )}
+
+      <aside className={`chat__sidebar${sidebarOpen ? ' chat__sidebar--open' : ''}`}>
         <div className="chat__sidebar-header">
           <span className="chat__sidebar-title">Chats</span>
-          <button
-            className="chat__new-btn"
-            onClick={() => setShowNewChat(true)}
-            aria-label="New chat"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} aria-hidden="true">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-            </svg>
-          </button>
+          <div className="chat__sidebar-header-actions">
+            <button
+              className="chat__new-btn"
+              onClick={() => setShowNewChat(true)}
+              aria-label="New chat"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} aria-hidden="true">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+              </svg>
+            </button>
+            <button
+              className="chat__sidebar-close"
+              onClick={() => setSidebarOpen(false)}
+              aria-label="Close sidebar"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} aria-hidden="true">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
         </div>
 
         {showNewChat && (
@@ -108,6 +133,7 @@ export default function Chat() {
               placeholder="Chat title..."
               value={newChatInput}
               onChange={(e) => setNewChatInput(e.target.value)}
+              onKeyDown={handleNewChatKeyDown}
               autoFocus
             />
             <div className="chat__new-form-actions">
@@ -141,12 +167,22 @@ export default function Chat() {
       <section className="chat__main">
         {!activeChatId ? (
           <div className="chat__empty">
+            <button className="chat__sidebar-toggle chat__sidebar-toggle--empty" onClick={() => setSidebarOpen(true)} aria-label="Open sidebar">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} aria-hidden="true">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+              </svg>
+            </button>
             <p className="chat__empty-text">Select a chat or create a new one to get started.</p>
             <button className="chat__empty-btn" onClick={() => setShowNewChat(true)}>New Chat</button>
           </div>
         ) : (
           <>
             <div className="chat__messages-header">
+              <button className="chat__sidebar-toggle" onClick={() => setSidebarOpen(true)} aria-label="Open sidebar">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} aria-hidden="true">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+                </svg>
+              </button>
               <h2 className="chat__messages-title">{activeChat?.title}</h2>
             </div>
 

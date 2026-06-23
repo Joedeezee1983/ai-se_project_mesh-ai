@@ -1,5 +1,7 @@
 .knowledge-base {
   max-width: 800px;
+  width: 100%;
+  padding: 40px;
 }
 
 .knowledge-base h1 {
@@ -83,4 +85,14 @@
 
 .knowledge-base__save-btn:hover {
   background-color: #333;
+}
+
+@media (max-width: 640px) {
+  .knowledge-base {
+    padding: 24px 16px;
+  }
+
+  .knowledge-base h1 {
+    font-size: 22px;
+  }
 }
